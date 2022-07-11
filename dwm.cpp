@@ -40,14 +40,15 @@
 #include <X11/extensions/Xinerama.h>
 #endif /* XINERAMA */
 
+constexpr auto BUTTONMASK = (ButtonPressMask | ButtonReleaseMask);
+constexpr auto MOUSEMASK = (BUTTONMASK | PointerMotionMask);
+
 /* macros */
-#define BUTTONMASK (ButtonPressMask | ButtonReleaseMask)
 #define CLEANMASK(mask) (mask & ~(numlockmask | LockMask))
 #define INRECT(X, Y, RX, RY, RW, RH)                                           \
   ((X) >= (RX) && (X) < (RX) + (RW) && (Y) >= (RY) && (Y) < (RY) + (RH))
 #define ISVISIBLE(C) ((C->tags & C->mon->tagset[C->mon->seltags]))
 #define LENGTH(X) (sizeof X / sizeof X[0])
-#define MOUSEMASK (BUTTONMASK | PointerMotionMask)
 #define WIDTH(X) ((X)->w + 2 * (X)->bw)
 #define HEIGHT(X) ((X)->h + 2 * (X)->bw)
 #define TAGMASK ((1 << LENGTH(tags)) - 1)
