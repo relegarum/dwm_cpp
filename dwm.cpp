@@ -292,24 +292,20 @@ struct NumTags {
 
 /* function implementations */
 void applyrules(Client *c) {
-  const char *clazz, *instance;
-  unsigned int i;
-  const Rule *r;
-  Monitor *m;
-  XClassHint ch = {0};
-
   /* rule matching */
   c->isfloating = c->tags = 0;
+  XClassHint ch = {0};
   if (XGetClassHint(dpy, c->win, &ch)) {
-    clazz = ch.res_class ? ch.res_class : broken;
-    instance = ch.res_name ? ch.res_name : broken;
-    for (i = 0; i < LENGTH(rules); i++) {
-      r = &rules[i];
+    const auto *clazz = ch.res_class ? ch.res_class : broken;
+    const auto *instance = ch.res_name ? ch.res_name : broken;
+    for (auto i = 0u; i < LENGTH(rules); i++) {
+      const Rule *r = &rules[i];
       if ((!r->title || strstr(c->name, r->title)) &&
           (!r->clazz || strstr(clazz, r->clazz)) &&
           (!r->instance || strstr(instance, r->instance))) {
         c->isfloating = r->isfloating;
         c->tags |= r->tags;
+        Monitor *m;
         for (m = mons; m && m->num != r->monitor; m = m->next)
           ;
         if (m)
