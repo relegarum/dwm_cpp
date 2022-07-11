@@ -70,23 +70,23 @@ enum {
   ClkLast
 }; /* clicks */
 
-typedef union {
+union Arg {
   int i;
   unsigned int ui;
   float f;
   const void *v;
-} Arg;
+};
 
-typedef struct {
+struct Button {
   unsigned int click;
   unsigned int mask;
   unsigned int button;
   void (*func)(const Arg *arg);
   const Arg arg;
-} Button;
+};
 
-typedef struct Monitor Monitor;
-typedef struct Client Client;
+struct Monitor;
+struct Client;
 struct Client {
   char name[256];
   float mina, maxa;
@@ -101,7 +101,7 @@ struct Client {
   Window win;
 };
 
-typedef struct {
+struct DC {
   int x, y, w, h;
   unsigned long norm[ColLast];
   unsigned long sel[ColLast];
@@ -114,19 +114,19 @@ typedef struct {
     XFontSet set;
     XFontStruct *xfont;
   } font;
-} DC; /* draw context */
+}; /* draw context */
 
-typedef struct {
+struct Key {
   unsigned int mod;
   KeySym keysym;
   void (*func)(const Arg *);
   const Arg arg;
-} Key;
+};
 
-typedef struct {
+struct Layout {
   const char *symbol;
   void (*arrange)(Monitor *);
-} Layout;
+};
 
 struct Monitor {
   char ltsymbol[16];
@@ -148,14 +148,14 @@ struct Monitor {
   const Layout *lt[2];
 };
 
-typedef struct {
+struct Rule {
   const char *clazz;
   const char *instance;
   const char *title;
   unsigned int tags;
   Bool isfloating;
   int monitor;
-} Rule;
+};
 
 /* function declarations */
 static void applyrules(Client *c);
