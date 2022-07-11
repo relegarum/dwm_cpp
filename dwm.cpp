@@ -47,8 +47,6 @@
   ((X) >= (RX) && (X) < (RX) + (RW) && (Y) >= (RY) && (Y) < (RY) + (RH))
 #define ISVISIBLE(C) ((C->tags & C->mon->tagset[C->mon->seltags]))
 #define LENGTH(X) (sizeof X / sizeof X[0])
-#define MAX(A, B) ((A) > (B) ? (A) : (B))
-#define MIN(A, B) ((A) < (B) ? (A) : (B))
 #define MOUSEMASK (BUTTONMASK | PointerMotionMask)
 #define WIDTH(X) ((X)->w + 2 * (X)->bw)
 #define HEIGHT(X) ((X)->h + 2 * (X)->bw)
@@ -326,8 +324,8 @@ Bool applysizehints(Client *c, int *x, int *y, int *w, int *h, Bool interact) {
   Monitor *m = c->mon;
 
   /* set minimum possible */
-  *w = MAX(1, *w);
-  *h = MAX(1, *h);
+  *w = std::max(1, *w);
+  *h = std::max(1, *h);
   if (interact) {
     if (*x > sw)
       *x = sw - WIDTH(c);
@@ -377,12 +375,12 @@ Bool applysizehints(Client *c, int *x, int *y, int *w, int *h, Bool interact) {
     /* restore base dimensions */
     *w += c->basew;
     *h += c->baseh;
-    *w = MAX(*w, c->minw);
-    *h = MAX(*h, c->minh);
+    *w = std::max(*w, c->minw);
+    *h = std::max(*h, c->minh);
     if (c->maxw)
-      *w = MIN(*w, c->maxw);
+      *w = std::min(*w, c->maxw);
     if (c->maxh)
-      *h = MIN(*h, c->maxh);
+      *h = std::min(*h, c->maxh);
   }
   return *x != c->x || *y != c->y || *w != c->w || *h != c->h;
 }
@@ -760,7 +758,8 @@ void drawtext(const char *text, unsigned long col[ColLast], Bool invert) {
   y = dc.y + (dc.h / 2) - (h / 2) + dc.font.ascent;
   x = dc.x + (h / 2);
   /* shorten text if necessary */
-  for (len = MIN(olen, sizeof buf); len && textnw(text, len) > dc.w - h; len--)
+  for (len = std::min(static_cast<size_t>(olen), sizeof buf);
+       len && textnw(text, len) > dc.w - h; len--)
     ;
   if (!len)
     return;
@@ -985,8 +984,8 @@ void initfont(const char *fontstr) {
     font_extents = XExtentsOfFontSet(dc.font.set);
     n = XFontsOfFontSet(dc.font.set, &xfonts, &font_names);
     for (i = 0, dc.font.ascent = 0, dc.font.descent = 0; i < n; i++) {
-      dc.font.ascent = MAX(dc.font.ascent, (*xfonts)->ascent);
-      dc.font.descent = MAX(dc.font.descent, (*xfonts)->descent);
+      dc.font.ascent = std::max(dc.font.ascent, (*xfonts)->ascent);
+      dc.font.descent = std::max(dc.font.descent, (*xfonts)->descent);
       xfonts++;
     }
   } else {
@@ -1098,12 +1097,13 @@ void manage(Window w, XWindowAttributes *wa) {
       c->x = c->mon->mx + c->mon->mw - WIDTH(c);
     if (c->y + HEIGHT(c) > c->mon->my + c->mon->mh)
       c->y = c->mon->my + c->mon->mh - HEIGHT(c);
-    c->x = MAX(c->x, c->mon->mx);
+    c->x = std::max(c->x, c->mon->mx);
     /* only fix client y-offset, if the client center might cover the bar */
-    c->y = MAX(c->y, ((c->mon->by == 0) && (c->x + (c->w / 2) >= c->mon->wx) &&
-                      (c->x + (c->w / 2) < c->mon->wx + c->mon->ww))
-                         ? bh
-                         : c->mon->my);
+    c->y = std::max(c->y,
+                    ((c->mon->by == 0) && (c->x + (c->w / 2) >= c->mon->wx) &&
+                     (c->x + (c->w / 2) < c->mon->wx + c->mon->ww))
+                        ? bh
+                        : c->mon->my);
     c->bw = borderpx;
   }
   wc.border_width = c->bw;
@@ -1308,8 +1308,8 @@ void resizemouse(const Arg *arg) {
       handler[ev.type](&ev);
       break;
     case MotionNotify:
-      nw = MAX(ev.xmotion.x - ocx - 2 * c->bw + 1, 1);
-      nh = MAX(ev.xmotion.y - ocy - 2 * c->bw + 1, 1);
+      nh = std::max(ev.xmotion.y - ocy - 2 * c->bw + 1, 1);
+      nw = std::max(ev.xmotion.x - ocx - 2 * c->bw + 1, 1);
       if (snap && nw >= selmon->wx && nw <= selmon->wx + selmon->ww &&
           nh >= selmon->wy && nh <= selmon->wy + selmon->wh) {
         if (!c->isfloating && selmon->lt[selmon->sellt]->arrange &&
