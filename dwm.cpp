@@ -279,7 +279,7 @@ static Bool running = True;
 static Cursor cursor[CurLast];
 static Display *dpy;
 static DC dc;
-static Monitor *mons = NULL, *selmon = NULL;
+static Monitor *mons = nullptr, *selmon = nullptr;
 static Window root;
 
 /* configuration, allows nested code to access above variables */
@@ -397,7 +397,7 @@ void arrange(Monitor *m) {
   else
     for (m = mons; m; m = m->next)
       showhide(m->stack);
-  focus(NULL);
+  focus(nullptr);
   if (m)
     arrangemon(m);
   else
@@ -434,7 +434,7 @@ void buttonpress(XEvent *e) {
   if ((m = wintomon(ev->window)) && m != selmon) {
     unfocus(selmon->sel);
     selmon = m;
-    focus(NULL);
+    focus(nullptr);
   }
   if (ev->window == selmon->barwin) {
     i = x = 0;
@@ -476,7 +476,7 @@ void checkotherwm(void) {
 
 void cleanup(void) {
   Arg a = {.ui = std::numeric_limits<unsigned int>::max()};
-  Layout foo = {"", NULL};
+  Layout foo = {"", nullptr};
   Monitor *m;
 
   view(&a);
@@ -557,7 +557,7 @@ void configurenotify(XEvent *e) {
       updatebars();
       for (m = mons; m; m = m->next)
         XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, m->ww, bh);
-      arrange(NULL);
+      arrange(nullptr);
     }
   }
 }
@@ -660,7 +660,7 @@ void die(const char *errstr, ...) {
 }
 
 Monitor *dirtomon(int dir) {
-  Monitor *m = NULL;
+  Monitor *m = nullptr;
 
   if (dir > 0) {
     if (!(m = selmon->next))
@@ -717,7 +717,7 @@ void drawbar(Monitor *m) {
       drawtext(m->sel->name, col, False);
       drawsquare(m->sel->isfixed, m->sel->isfloating, False, col);
     } else
-      drawtext(NULL, dc.norm, False);
+      drawtext(nullptr, dc.norm, False);
   }
   XCopyArea(dpy, dc.drawable, m->barwin, dc.gc, 0, 0, m->ww, bh, 0, 0);
   XSync(dpy, False);
@@ -794,7 +794,7 @@ void enternotify(XEvent *e) {
   if ((c = wintoclient(ev->window)))
     focus(c);
   else
-    focus(NULL);
+    focus(nullptr);
 }
 
 void expose(XEvent *e) {
@@ -835,18 +835,18 @@ void focusin(XEvent *e) { /* there are some broken focus acquiring clients */
 }
 
 void focusmon(const Arg *arg) {
-  Monitor *m = NULL;
+  Monitor *m = nullptr;
 
   if (!mons->next)
     return;
   m = dirtomon(arg->i);
   unfocus(selmon->sel);
   selmon = m;
-  focus(NULL);
+  focus(nullptr);
 }
 
 void focusstack(const Arg *arg) {
-  Client *c = NULL, *i;
+  Client *c = nullptr, *i;
 
   if (!selmon->sel)
     return;
@@ -891,7 +891,7 @@ Bool getrootptr(int *x, int *y) {
 long getstate(Window w) {
   int format, status;
   long result = -1;
-  unsigned char *p = NULL;
+  unsigned char *p = nullptr;
   unsigned long n, extra;
   Atom real;
 
@@ -907,7 +907,7 @@ long getstate(Window w) {
 }
 
 Bool gettextprop(Window w, Atom atom, char *text, unsigned int size) {
-  char **list = NULL;
+  char **list = nullptr;
   int n;
   XTextProperty name;
 
@@ -973,7 +973,7 @@ void initfont(const char *fontstr) {
   char *def, **missing;
   int i, n;
 
-  missing = NULL;
+  missing = nullptr;
   dc.font.set = XCreateFontSet(dpy, fontstr, &missing, &n, &def);
   if (missing) {
     while (n--)
@@ -1069,7 +1069,7 @@ void killclient(const Arg *arg) {
 
 void manage(Window w, XWindowAttributes *wa) {
   static Client cz;
-  Client *c, *t = NULL;
+  Client *c, *t = nullptr;
   Window trans = None;
   XWindowChanges wc;
 
@@ -1204,7 +1204,7 @@ void movemouse(const Arg *arg) {
           ny = selmon->wy + selmon->wh - HEIGHT(c);
         if (!c->isfloating && selmon->lt[selmon->sellt]->arrange &&
             (abs(nx - c->x) > snap || abs(ny - c->y) > snap))
-          togglefloating(NULL);
+          togglefloating(nullptr);
       }
       if (!selmon->lt[selmon->sellt]->arrange || c->isfloating)
         resize(c, nx, ny, c->w, c->h, True);
@@ -1215,7 +1215,7 @@ void movemouse(const Arg *arg) {
   if ((m = ptrtomon(c->x + c->w / 2, c->y + c->h / 2)) != selmon) {
     sendmon(c, m);
     selmon = m;
-    focus(NULL);
+    focus(nullptr);
   }
 }
 
@@ -1249,7 +1249,7 @@ void propertynotify(XEvent *e) {
       break;
     case XA_WM_TRANSIENT_FOR:
       XGetTransientForHint(dpy, c->win, &trans);
-      if (!c->isfloating && (c->isfloating = (wintoclient(trans) != NULL)))
+      if (!c->isfloating && (c->isfloating = (wintoclient(trans) != nullptr)))
         arrange(c->mon);
       break;
     case XA_WM_NORMAL_HINTS:
@@ -1318,7 +1318,7 @@ void resizemouse(const Arg *arg) {
           nh >= selmon->wy && nh <= selmon->wy + selmon->wh) {
         if (!c->isfloating && selmon->lt[selmon->sellt]->arrange &&
             (abs(nw - c->w) > snap || abs(nh - c->h) > snap))
-          togglefloating(NULL);
+          togglefloating(nullptr);
       }
       if (!selmon->lt[selmon->sellt]->arrange || c->isfloating)
         resize(c, c->x, c->y, nw, nh, True);
@@ -1333,7 +1333,7 @@ void resizemouse(const Arg *arg) {
   if ((m = ptrtomon(c->x + c->w / 2, c->y + c->h / 2)) != selmon) {
     sendmon(c, m);
     selmon = m;
-    focus(NULL);
+    focus(nullptr);
   }
 }
 
@@ -1373,7 +1373,7 @@ void run(void) {
 
 void scan(void) {
   unsigned int i, num;
-  Window d1, d2, *wins = NULL;
+  Window d1, d2, *wins = nullptr;
   XWindowAttributes wa;
 
   if (XQueryTree(dpy, root, &d1, &d2, &wins, &num)) {
@@ -1406,8 +1406,8 @@ void sendmon(Client *c, Monitor *m) {
   c->tags = m->tagset[m->seltags]; /* assign tags of target monitor */
   attach(c);
   attachstack(c);
-  focus(NULL);
-  arrange(NULL);
+  focus(nullptr);
+  arrange(nullptr);
 }
 
 void setclientstate(Client *c, long state) {
@@ -1476,7 +1476,7 @@ void setup(void) {
   dc.sel[ColFG] = getcolor(selfgcolor);
   dc.drawable = XCreatePixmap(dpy, root, DisplayWidth(dpy, screen), bh,
                               DefaultDepth(dpy, screen));
-  dc.gc = XCreateGC(dpy, root, 0, NULL);
+  dc.gc = XCreateGC(dpy, root, 0, nullptr);
   XSetLineAttributes(dpy, dc.gc, 1, LineSolid, CapButt, JoinMiter);
   if (!dc.font.set)
     XSetFont(dpy, dc.gc, dc.font.xfont->fid);
@@ -1513,7 +1513,7 @@ void showhide(Client *c) {
 void sigchld(int unused) {
   if (signal(SIGCHLD, sigchld) == SIG_ERR)
     die("Can't install SIGCHLD handler");
-  while (0 < waitpid(-1, NULL, WNOHANG))
+  while (0 < waitpid(-1, nullptr, WNOHANG))
     ;
 }
 
@@ -1546,7 +1546,7 @@ int textnw(const char *text, unsigned int len) {
   XRectangle r;
 
   if (dc.font.set) {
-    XmbTextExtents(dc.font.set, text, len, NULL, &r);
+    XmbTextExtents(dc.font.set, text, len, nullptr, &r);
     return r.width;
   }
   return XTextWidth(dc.font.xfont, text, len);
@@ -1651,7 +1651,7 @@ void unmanage(Client *c, Bool destroyed) {
     XUngrabServer(dpy);
   }
   delete c;
-  focus(NULL);
+  focus(nullptr);
   arrange(m);
 }
 
@@ -1700,7 +1700,7 @@ Bool updategeom(void) {
     Client *c;
     Monitor *m;
     XineramaScreenInfo *info = XineramaQueryScreens(dpy, &nn);
-    XineramaScreenInfo *unique = NULL;
+    XineramaScreenInfo *unique = nullptr;
 
     info = XineramaQueryScreens(dpy, &nn);
     for (n = 0, m = mons; m; m = m->next, n++)
@@ -1873,7 +1873,7 @@ Client *wintoclient(Window w) {
     for (c = m->clients; c; c = c->next)
       if (c->win == w)
         return c;
-  return NULL;
+  return nullptr;
 }
 
 Monitor *wintomon(Window w) {
@@ -1944,7 +1944,7 @@ int main(int argc, char *argv[]) {
     die("usage: dwm [-v]\n");
   if (!setlocale(LC_CTYPE, "") || !XSupportsLocale())
     fputs("warning: no locale support\n", stderr);
-  if (!(dpy = XOpenDisplay(NULL)))
+  if (!(dpy = XOpenDisplay(nullptr)))
     die("dwm: cannot open display\n");
   checkotherwm();
   setup();
